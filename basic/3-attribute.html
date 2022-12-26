@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../lib/index.js"></script>
+  </head>
+  <body>
+    <p>attribute only valid in vertex shader, cannot use in fragment</p>
+    <canvas id="canvas"></canvas>
+  </body>
+
+  <script>
+    const ctx = document.getElementById("canvas");
+    const gl = ctx.getContext("webgl");
+
+    // vec4(x,y,z,w)
+    // x/w, y/w, z/w
+    const VERTEX_SHADER_SOURCE = `
+      attribute vec4 aPosition; // default (0.0,0.0,0.0,1.0)
+      void main() {
+        gl_Position = aPosition;
+        gl_PointSize = 10.0;
+      }
+    `;
+
+    // vec4(r,g,b,a)
+    const FRAGMENT_SHADER_SOURCE = `
+      void main() {
+        gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+      }
+    `;
+
+    // init shader
+    const program = initShader(
+      gl,
+      VERTEX_SHADER_SOURCE,
+      FRAGMENT_SHADER_SOURCE
+    );
+
+    // get position
+    const aPosition = gl.getAttribLocation(program, "aPosition");
+
+    let x = 0;
+    setInterval(() => {
+      x += 0.1;
+      if (x > 1) {
+        x = 0;
+      }
+      // set position
+      gl.vertexAttrib4f(aPosition, x, 0.0, 0.0, 1.0);
+      // re-draw
+      gl.drawArrays(gl.POINTS, 0, 1);
+    }, 200);
+  </script>
+</html>

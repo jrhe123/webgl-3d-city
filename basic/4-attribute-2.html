@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../lib/index.js"></script>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        margin: 0 auto;
+        display: block;
+        background-color: grey;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+  </body>
+
+  <script>
+    const ctx = document.getElementById("canvas");
+    const gl = ctx.getContext("webgl");
+
+    // vec4(x,y,z,w)
+    // x/w, y/w, z/w
+    const VERTEX_SHADER_SOURCE = `
+      attribute vec4 aPosition; // default (0.0,0.0,0.0,1.0)
+      void main() {
+        gl_Position = aPosition;
+        gl_PointSize = 10.0;
+      }
+    `;
+
+    // vec4(r,g,b,a)
+    const FRAGMENT_SHADER_SOURCE = `
+      void main() {
+        gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+      }
+    `;
+
+    // init shader
+    const program = initShader(
+      gl,
+      VERTEX_SHADER_SOURCE,
+      FRAGMENT_SHADER_SOURCE
+    );
+
+    // get position
+    const aPosition = gl.getAttribLocation(program, "aPosition");
+
+    // add mouse event to canvas
+    const points = [];
+    ctx.onmousemove = function (e) {
+      const x = e.clientX;
+      const y = e.clientY;
+      const position = e.target.getBoundingClientRect();
+      // position relative to canvas
+      const domX = x - position.left;
+      const domY = y - position.top;
+      // half size: we need to convert it to [-1,0,1]
+      const halfWidth = ctx.offsetWidth / 2;
+      const halfHeight = ctx.offsetHeight / 2;
+      const clickX = (domX - halfWidth) / halfWidth;
+      const clickY = (halfHeight - domY) / halfHeight;
+
+      console.log("clickX: ", clickX);
+      console.log("clickY: ", clickY);
+      points.push({
+        clickX,
+        clickY,
+      });
+
+      for (const p of points) {
+        // set position
+        gl.vertexAttrib4f(aPosition, p.clickX, p.clickY, 0.0, 1.0);
+        // re-draw
+        gl.drawArrays(gl.POINTS, 0, 1);
+      }
+    };
+
+    // set position
+    // gl.vertexAttrib4f(aPosition, 0.0, 0.0, 0.0, 1.0);
+    // re-draw
+    // gl.drawArrays(gl.POINTS, 0, 1);
+  </script>
+</html>
