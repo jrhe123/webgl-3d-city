@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #canvas {
+        background-color: grey;
+      }
+    </style>
+    <script src="../lib/index.js"></script>
+  </head>
+  <body>
+    <p>pass varing color from vertex to fragment, based on aPosition data</p>
+    <canvas id="canvas" width="400" height="400"></canvas>
+  </body>
+
+  <script>
+    const ctx = document.getElementById("canvas");
+    const gl = ctx.getContext("webgl");
+
+    // vec4(x,y,z,w)
+    // x/w, y/w, z/w
+    const VERTEX_SHADER_SOURCE = `
+      attribute vec4 aPosition; // default (0.0,0.0,0.0,1.0)
+      attribute float aPointSize;
+
+      varying vec4 vColor;
+
+      void main() {
+        vColor = aPosition;
+
+        gl_Position = aPosition;
+        gl_PointSize = aPointSize;
+      }
+    `;
+
+    // vec4(r,g,b,a)
+    const FRAGMENT_SHADER_SOURCE = `
+      precision lowp float;
+      varying vec4 vColor;
+
+      void main() {
+        gl_FragColor = vColor;
+      }
+    `;
+
+    // init shader
+    const program = initShader(
+      gl,
+      VERTEX_SHADER_SOURCE,
+      FRAGMENT_SHADER_SOURCE
+    );
+
+    // get position
+    const aPosition = gl.getAttribLocation(program, "aPosition");
+    // get point size
+    const aPointSize = gl.getAttribLocation(program, "aPointSize");
+
+    // THREE vertex point in array
+    // -0.5, -0.5, 10.0,
+    // 0.5, -0.5, 20.0,
+    // 0.0, 0.5, 30.0,
+    const points = new Float32Array([
+      -0.5, -0.5, 10.0, 0.5, -0.5, 20.0, 0.0, 0.5, 30.0,
+    ]);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
+
+    const BYTES = points.BYTES_PER_ELEMENT;
+
+    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, BYTES * 3, 0);
+    gl.enableVertexAttribArray(aPosition);
+
+    // 3 points
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  </script>
+</html>

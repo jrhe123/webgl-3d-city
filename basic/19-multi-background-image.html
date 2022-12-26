@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #canvas {
+        background-color: grey;
+      }
+    </style>
+    <script src="../lib/index.js"></script>
+  </head>
+  <body>
+    <p>pass varing color from vertex to fragment, based on aPosition data</p>
+    <canvas id="canvas" width="400" height="400"></canvas>
+  </body>
+
+  <script>
+    const ctx = document.getElementById("canvas");
+    const gl = ctx.getContext("webgl");
+
+    // vec4(x,y,z,w)
+    // x/w, y/w, z/w
+    const VERTEX_SHADER_SOURCE = `
+      attribute vec4 aTex;
+      attribute vec4 aPosition; // default (0.0,0.0,0.0,1.0)
+
+      varying vec2 vTex;
+
+      void main() {
+        gl_Position = aPosition;
+        vTex = vec2(aTex.x, aTex.y);
+      }
+    `;
+
+    // vec4(r,g,b,a)
+    const FRAGMENT_SHADER_SOURCE = `
+      precision lowp float;
+      uniform sampler2D uSampler;
+      uniform sampler2D uSampler2;
+      varying vec2 vTex;
+
+      void main() {
+        vec4 c1 = texture2D(uSampler, vTex);
+        vec4 c2 = texture2D(uSampler2, vTex);
+        gl_FragColor = c1 * c2;
+      }
+    `;
+
+    // init shader
+    const program = initShader(
+      gl,
+      VERTEX_SHADER_SOURCE,
+      FRAGMENT_SHADER_SOURCE
+    );
+
+    // get position
+    const aPosition = gl.getAttribLocation(program, "aPosition");
+    // get tex
+    const aTex = gl.getAttribLocation(program, "aTex");
+    // get uSampler
+    const uSampler = gl.getUniformLocation(program, "uSampler");
+    const uSampler2 = gl.getUniformLocation(program, "uSampler2");
+
+    // THREE vertex point in array
+    // -0.5, -0.5, 0.0, 1.0,
+    //  0.5, -0.5, 0.0,  0.0,
+    //  -0.5, 0.5, 1.0,  1.0,
+    //  0.5, 0.5, 1.0, 0.0,
+    const points = new Float32Array([
+      -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, 0.0, 0.0, -0.5, 0.5, 1.0, 1.0, 0.5, 0.5,
+      1.0, 0.0,
+    ]);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
+
+    const BYTES = points.BYTES_PER_ELEMENT;
+
+    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, BYTES * 4, 0);
+    gl.enableVertexAttribArray(aPosition);
+
+    gl.vertexAttribPointer(aTex, 2, gl.FLOAT, false, BYTES * 4, BYTES * 2);
+    gl.enableVertexAttribArray(aTex);
+
+    function getImage(location, url, index) {
+      return new Promise((resolve, reject) => {
+        // background image
+        const img = new Image();
+        img.onload = function () {
+          const texture = gl.createTexture();
+          // flip image
+          gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+          gl.activeTexture(gl[`TEXTURE${index}`]);
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+          // SIZE
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          // vertical / horizontal
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          //
+          gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGB,
+            gl.RGB,
+            gl.UNSIGNED_BYTE,
+            img
+          );
+          //
+          gl.uniform1i(location, index);
+
+          resolve();
+        };
+        img.src = url;
+      });
+    }
+
+    Promise.all([
+      getImage(uSampler, "../assets/img/demo_1.jpg", 0),
+      getImage(uSampler2, "../assets/img/demo_2.jpg", 1),
+    ])
+      .then(() => {
+        // 4 points
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      })
+      .catch((err) => {});
+  </script>
+</html>
