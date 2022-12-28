@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="../lib/three/three.js"></script>
+    <script src="../lib/three/dat.gui.js"></script>
+    <script src="../control/index.js"></script>
+  </head>
+  <body></body>
+</html>
+
+<script>
+  // scene & camera
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  camera.position.set(0, 0, 20);
+
+  // add to DOM
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // cube
+  const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+  const cubeMat = new THREE.MeshLambertMaterial({
+    color: 0xff0000,
+    wireframe: false,
+  });
+  const cube = new THREE.Mesh(cubeGeo, cubeMat);
+  cube.name = "cube";
+  scene.add(cube);
+
+  // sphere
+  const sphereGeo = new THREE.SphereGeometry(1, 10, 10);
+  const sphereMat = new THREE.MeshLambertMaterial({
+    color: 0x00ff00,
+    wireframe: false,
+  });
+  const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+  sphere.name = "sphere";
+  sphere.position.x = 3;
+  scene.add(sphere);
+
+  // plane for shadow
+  const planeGeo = new THREE.PlaneGeometry(20, 30);
+  const planeMat = new THREE.MeshBasicMaterial({
+    color: 0x999999,
+  });
+  const plane = new THREE.Mesh(planeGeo, planeMat);
+  plane.rotateZ(20);
+  plane.position.z = -10;
+  plane.position.x = 3;
+  scene.add(plane);
+
+  // ambient light
+  // const ambientLight = new THREE.AmbientLight(0xffffff);
+  // scene.add(ambientLight);
+  // initControls(ambientLight);
+
+  // hemisphere light
+  const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x00ff00);
+  hemisphereLight.position.set(-10, 10, 90);
+  scene.add(hemisphereLight);
+  initControls(hemisphereLight);
+
+  // directional light
+  const directionalLight = new THREE.DirectionalLight(0xffffff);
+  directionalLight.position.set(-10, 10, 90);
+  directionalLight.shadowCameraLeft = -50;
+  directionalLight.shadowCameraRight = 50;
+  directionalLight.shadowCameraTop = 50;
+  directionalLight.shadowCameraBottom = -50;
+  directionalLight.shadowCameraNear = 2;
+  directionalLight.shadowCameraFar = 200;
+  directionalLight.shadowMapWidth = 4096;
+  directionalLight.shadowMapHeight = 4096;
+  scene.add(directionalLight);
+  initControls(directionalLight);
+
+  // spot light
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(-10, 10, 90);
+  spotLight.shadowMapWidth = 4096;
+  spotLight.shadowMapHeight = 4096;
+  scene.add(spotLight);
+  initControls(spotLight);
+
+  // generate shadow
+  cube.castShadow = true;
+  sphere.castShadow = true;
+  spotLight.castShadow = true;
+  directionalLight.castShadow = true;
+  plane.receiveShadow = true;
+  renderer.shadowMapEnabled = true;
+
+  // anim
+  const animation = () => {
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+
+    hemisphereLight.position.z -= 0.1;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+  };
+  animation();
+</script>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="../lib/three/three.js"></script>
+    <script src="../lib/three/dat.gui.js"></script>
+    <script src="../control/index.js"></script>
+  </head>
+  <body></body>
+</html>
+
+<script>
+  // scene & camera
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  camera.position.set(0, 0, 20);
+
+  // add to DOM
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // cube
+  const cubeGeo = new THREE.BoxGeometry(2, 2, 2);
+
+  // const cubeMat = new THREE.MeshBasicMaterial({
+  //  color: 0xff0000,
+  //  wireframe: false,
+  // });
+
+  // const cubeMat = new THREE.MeshDepthMaterial();
+
+  const cubeMat = new THREE.MeshNormalMaterial();
+
+  // const cubeMat = new THREE.MeshFaceMaterial([
+  //  new THREE.MeshBasicMaterial({ color: 0xee9e60 }),
+  //  new THREE.MeshBasicMaterial({ color: 0x0000ff }),
+  //  new THREE.MeshBasicMaterial({ color: 0x199e60 }),
+  //  new THREE.MeshBasicMaterial({ color: 0xff0000 }),
+  //  new THREE.MeshBasicMaterial({ color: 0xeeefff }),
+  //  new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
+  // ]);
+
+  // const cubeMat = new THREE.MeshLambertMaterial({
+  //  color: 0xff0000,
+  // });
+
+  // const cubeMat = new THREE.MeshPhongMaterial({
+  //  color: 0xff0000,
+  // });
+
+  // const cubeMat = new THREE.ShaderMaterial({
+  //   uniforms: {
+  //     r: {
+  //       type: "f",
+  //       value: 1.0,
+  //     },
+  //     a: {
+  //       type: "f",
+  //       value: 1.0,
+  //     },
+  //   },
+  //   vertexShader: `
+  //     void main() {
+  //       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  //     }
+  //   `,
+  //   fragmentShader: `
+  //     precision lowp float;
+  //     uniform float r;
+  //     uniform float a;
+  //     void main() {
+  //       gl_FragColor = vec4(r,0.0,0.0,a);
+  //     }
+  //   `,
+  //   transparent: true,
+  // });
+
+  // mix two materials
+  // const cube = new THREE.SceneUtils.createMultiMaterialObject(cubeGeo, [
+  //  new THREE.MeshLambertMaterial({ color: 0xff0000 }),
+  //  new THREE.MeshBasicMaterial({ wireframe: true }),
+  //]);
+
+  const cube = new THREE.Mesh(cubeGeo, cubeMat);
+
+  scene.add(cube);
+  initControls(cubeMat, camera);
+
+  // light
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(-10, 10, 10);
+  scene.add(spotLight);
+
+  //
+  const animation = () => {
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+  };
+  animation();
+</script>

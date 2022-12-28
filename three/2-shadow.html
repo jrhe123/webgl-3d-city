@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="../lib/three/three.js"></script>
+  </head>
+  <body></body>
+</html>
+
+<script>
+  // scene & camera
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  camera.position.set(0, 0, 20);
+
+  // add to DOM
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // cube
+  const cubeGeo = new THREE.BoxGeometry(2, 2, 2);
+  const cubeMat = new THREE.MeshLambertMaterial({
+    color: 0xff0000,
+    wireframe: false,
+  });
+  const cube = new THREE.Mesh(cubeGeo, cubeMat);
+  scene.add(cube);
+
+  // sphere
+  const sphereGeo = new THREE.SphereGeometry(1, 10, 10);
+  const sphereMat = new THREE.MeshLambertMaterial({
+    color: 0xff0000,
+    wireframe: false,
+  });
+  const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+  sphere.position.x = 3;
+  scene.add(sphere);
+
+  // plane for shadow
+  const planeGeo = new THREE.PlaneGeometry(20, 30);
+  const planeMat = new THREE.MeshBasicMaterial({
+    color: 0x999999,
+  });
+  const plane = new THREE.Mesh(planeGeo, planeMat);
+  plane.rotateZ(20);
+  plane.position.z = -10;
+  plane.position.x = 3;
+  scene.add(plane);
+
+  // light
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(-10, 10, 90);
+  scene.add(spotLight);
+
+  // generate shadow
+  cube.castShadow = true;
+  sphere.castShadow = true;
+  spotLight.castShadow = true;
+  plane.receiveShadow = true;
+  renderer.shadowMapEnabled = true;
+
+  // anim
+  const animation = () => {
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+  };
+  animation();
+</script>
