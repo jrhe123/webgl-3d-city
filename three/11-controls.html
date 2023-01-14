@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="../lib/three/three.js"></script>
+    <script src="../lib/three/MTLLoader.js"></script>
+    <script src="../lib/three/OBJLoader.js"></script>
+    <script src="../lib/three/OBJMTLLoader.js"></script>
+    <!-- controls -->
+    <script src="../lib/three/TrackballControls.js"></script>
+    <script src="../lib/three/FirstPersonControls.js"></script>
+    <script src="../lib/three/FlyControls.js"></script>
+    <script src="../lib/three/RollControls.js"></script>
+    <script src="../lib/three/OrbitControls.js"></script>
+  </head>
+  <body></body>
+</html>
+
+<script>
+  //
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  // trackball
+  // camera.position.set(0, 300, 400);
+  // first person
+  // camera.position.set(100, 30, 0);
+  // fly
+  // camera.position.set(100, 100, 0);
+  // roll
+  // camera.position.set(100, 100, 0);
+  // orbit
+  camera.position.set(100, 100, 0);
+
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  // controls
+  const clock = new THREE.Clock();
+  // const trackball = new THREE.TrackballControls(camera);
+
+  // const firstPerson = new THREE.FirstPersonControls(camera);
+  // firstPerson.lookSpeed = 0.5;
+
+  // const fly = new THREE.FlyControls(camera);
+  // fly.rollSpeed = 0.5;
+
+  // const roll = new THREE.RollControls(camera);
+
+  const orbit = new THREE.OrbitControls(camera);
+
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const lambert = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+
+  // models
+  const loader = new THREE.OBJMTLLoader();
+  loader.load(
+    "../assets/models/city.obj",
+    "../assets/models/city.mtl",
+    (mesh) => {
+      scene.add(mesh);
+    }
+  );
+
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(2000, 8000, 4000);
+  scene.add(spotLight);
+
+  const animation = () => {
+    // trackball.update();
+    // firstPerson.update(clock.getDelta());
+    // fly.update(clock.getDelta());
+    // roll.update(clock.getDelta());
+    orbit.update(clock.getDelta());
+
+    //
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+  };
+  animation();
+</script>
