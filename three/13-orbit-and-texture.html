@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="../lib/three/three.js"></script>
+    <script src="../lib/three/MTLLoader.js"></script>
+    <script src="../lib/three/OBJLoader.js"></script>
+    <script src="../lib/three/OBJMTLLoader.js"></script>
+    <!-- controls -->
+    <script src="../lib/three/OrbitControls.js"></script>
+  </head>
+  <body></body>
+</html>
+
+<script>
+  //
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  // orbit
+  camera.position.set(100, 100, 0);
+
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  // controls
+  const clock = new THREE.Clock();
+  const orbit = new THREE.OrbitControls(camera);
+  orbit.minDistance = 1;
+  orbit.maxDistance = 50;
+
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // env
+  const mats = [];
+  const images = [
+    "../assets/img/right.jpg",
+    "../assets/img/left.jpg",
+    "../assets/img/top.jpg",
+    "../assets/img/bottom.jpg",
+    "../assets/img/front.jpg",
+    "../assets/img/back.jpg",
+  ];
+  images.forEach((item) => {
+    mats.push(
+      new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture(item),
+        side: THREE.DoubleSide,
+      })
+    );
+  });
+  const skyBox = new THREE.Mesh(
+    new THREE.BoxGeometry(100, 100, 100),
+    new THREE.MeshFaceMaterial(mats)
+  );
+  scene.add(skyBox);
+
+  // cube
+  const cGeometry = new THREE.BoxGeometry(3, 3, 3);
+  const cMaterial = new THREE.MeshBasicMaterial({
+    envMap: THREE.ImageUtils.loadTextureCube(images),
+  });
+  const cube = new THREE.Mesh(cGeometry, cMaterial);
+  cube.position.x = -5;
+  scene.add(cube);
+  // sphere (changes with env)
+  const sGeometry = new THREE.SphereGeometry(2, 20, 20);
+  const cubeCamera = new THREE.CubeCamera(0.1, 2000, 256);
+  scene.add(cubeCamera);
+  const sMaterial = new THREE.MeshBasicMaterial({
+    envMap: cubeCamera.renderTarget,
+  });
+  const sphere = new THREE.Mesh(sGeometry, sMaterial);
+  sphere.position.x = 5;
+  scene.add(sphere);
+
+  // light
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(2000, 8000, 4000);
+  scene.add(spotLight);
+
+  const animation = () => {
+    orbit.update(clock.getDelta());
+    //
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    cubeCamera.updateCubeMap(renderer, scene);
+    //
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation);
+  };
+  animation();
+</script>
