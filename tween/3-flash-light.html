@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body></body>
+</html>
+
+<script type="module">
+  import * as THREE from "https://cdn.skypack.dev/three@v0.129.0";
+  import { OrbitControls } from "https://cdn.skypack.dev/three@v0.129.0/examples/jsm/controls/OrbitControls.js";
+  import { EffectComposer } from "https://cdn.skypack.dev/three@v0.129.0/examples/jsm/postprocessing/EffectComposer.js";
+  import { RenderPass } from "https://cdn.skypack.dev/three@v0.129.0/examples/jsm/postprocessing/RenderPass.js";
+  import { OutlinePass } from "https://cdn.skypack.dev/three@v0.129.0/examples/jsm/postprocessing/OutlinePass.js";
+
+  //
+  const clock = new THREE.Clock();
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  camera.position.set(100, 100, 0);
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  const spotLight = new THREE.SpotLight(0xffffff);
+  spotLight.position.set(2000, 8000, 4000);
+  scene.add(spotLight);
+
+  const g1 = new THREE.BoxGeometry(18, 18, 18);
+  const g2 = new THREE.BoxGeometry(18, 18, 18);
+  const m1 = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+  });
+  const m2 = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+  });
+  const c1 = new THREE.Mesh(g1, m1);
+  const c2 = new THREE.Mesh(g2, m2);
+  c1.position.y = 20;
+  c2.position.y = -20;
+
+  scene.add(c1);
+  scene.add(c2);
+
+  const renderScene = new RenderPass(scene, camera);
+  const outlinePass = new OutlinePass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    scene,
+    camera,
+    [c2]
+  );
+  outlinePass.renderToScreen = true;
+  outlinePass.edgeStrength = 3;
+  outlinePass.edgeGlow = 2;
+  outlinePass.edgeThickness = 2;
+  outlinePass.pulsePeriod = 1;
+  outlinePass.visibleEdgeColor.set("yellow");
+
+  const bloom = new EffectComposer(renderer);
+  bloom.setSize(window.innerWidth, window.innerHeight);
+  bloom.addPass(renderScene);
+  bloom.addPass(outlinePass);
+
+  const animation = () => {
+    renderer.render(scene, camera);
+    //
+    bloom.render();
+    requestAnimationFrame(animation);
+  };
+  animation();
+</script>
