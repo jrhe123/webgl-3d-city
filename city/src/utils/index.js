@@ -46,7 +46,7 @@ export const initCity = () => {
   renderer.setClearColor(new THREE.Color(0x000000), 1)
 
   // init city with "requestAnimationFrame"
-  const city = new City(scene)
+  const city = new City(scene, camera)
   const start = () => {
     city.start()
     // controls
