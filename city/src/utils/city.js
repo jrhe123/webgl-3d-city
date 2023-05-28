@@ -1,6 +1,6 @@
 import { loadFBX } from './loader'
 import { SurrondLine } from './surroundLine'
-import * as THREE from 'three'
+import { Background } from './background'
 
 export class City {
   constructor(scene) {
@@ -16,10 +16,16 @@ export class City {
             new SurrondLine(this.scene, child)
           }
         })
+        //
+        this.initEffect()
       })
       .catch((error) => {
         console.log('load error: ', error)
       })
+  }
+
+  initEffect() {
+    new Background(this.scene)
   }
 
   start() {}
