@@ -4,5 +4,6 @@ export const color = {
   soundline: '#4f90bb', // building outline color
   risingColor: '#5588AA', // buiding scanning up line color
   liveColor: '#ffffff', // building scanning horizontal line color
-  radarColor: '#ff8800' //radar color
+  radarColor: '#ff8800', //radar color
+  wall: '#fab73f' // wall color
 }
