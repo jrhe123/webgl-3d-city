@@ -4,6 +4,8 @@ import { loadFBX } from './loader'
 //
 import { SurrondLine } from './surroundLine'
 import { Background } from './background'
+import { Radar } from './radar'
+
 export class City {
   constructor(scene, camera) {
     this.scene = scene
@@ -40,6 +42,8 @@ export class City {
 
   initEffect() {
     new Background(this.scene)
+
+    new Radar(this.scene, this.time)
 
     // click event
     this.addClick()
