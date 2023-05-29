@@ -8,6 +8,7 @@ import { Radar } from './radar'
 import { Wall } from './wall'
 import { Circle } from './circle'
 import { Ball } from './ball'
+import { Cone } from './cone'
 
 export class City {
   constructor(scene, camera) {
@@ -22,6 +23,11 @@ export class City {
     // scan horizontal line
     this.time = {
       value: 0
+    }
+    // cone animation
+    this.flag = false
+    this.top = {
+      value: 5
     }
     //
     this.loadCity()
@@ -53,6 +59,8 @@ export class City {
     new Circle(this.scene, this.time)
 
     new Ball(this.scene, this.time)
+
+    new Cone(this.scene, this.top, this.height)
     // click event
     this.addClick()
   }
@@ -132,5 +140,10 @@ export class City {
     }
     // scan horizontal line
     this.time.value += delta
+    // cone animation value
+    if (this.top.value > 15 || this.top.value < 0) {
+      this.flag = !this.flag
+    }
+    this.top.value += this.flag ? -0.8 : 0.8
   }
 }

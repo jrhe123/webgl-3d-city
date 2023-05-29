@@ -7,5 +7,6 @@ export const color = {
   radarColor: '#ff8800', //radar color
   wall: '#fab73f', // wall color
   circle: '#00bbff', // circle color
-  ball: '#fab73f' // ball color
+  ball: '#fab73f', // ball color
+  cone: '#ffff00' // cone color
 }
