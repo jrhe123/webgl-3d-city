@@ -2,9 +2,10 @@ import * as THREE from 'three'
 import { color } from '../config'
 
 export class SurrondLine {
-  constructor(scene, child) {
+  constructor(scene, child, height) {
     this.scene = scene
     this.child = child
+    this.height = height
     //
     this.createMesh()
     // outline of building
@@ -33,6 +34,10 @@ export class SurrondLine {
         },
         u_size: {
           value: size
+        },
+        u_height: this.height,
+        u_up_color: {
+          value: new THREE.Color(color.risingColor)
         }
       },
       vertexShader: `
@@ -49,11 +54,21 @@ export class SurrondLine {
         uniform vec3 u_head_color;
         uniform float u_size;
 
+        uniform vec3 u_up_color;
+        uniform float u_height;
+
         void main() {
           vec3 base_color = u_city_color;
 
           // calculate color based on the mesh height
           base_color = mix(base_color, u_head_color, v_position.z / u_size);
+
+          // scanning line effect
+          if (u_height > v_position.z && u_height < v_position.z + 6.0) {
+            float f_index = (u_height - v_position.z) / 3.0;
+            // blur the both sides color
+            base_color = mix(u_up_color, base_color, abs(f_index - 1.0));
+          }
           
           gl_FragColor = vec4(base_color, 1.0);
         }

@@ -10,6 +10,9 @@ export class City {
     this.camera = camera
     this.tweenPosition = null
     this.tweenRotation = null
+    this.height = {
+      value: 5
+    }
     //
     this.loadCity()
   }
@@ -19,7 +22,7 @@ export class City {
       .then((obj) => {
         obj.traverse((child) => {
           if (child.isMesh) {
-            new SurrondLine(this.scene, child)
+            new SurrondLine(this.scene, child, this.height)
           }
         })
         //
@@ -102,6 +105,13 @@ export class City {
     if (this.tweenPosition && this.tweenRotation) {
       this.tweenPosition.update()
       this.tweenRotation.update()
+    }
+
+    // animate scanning line
+    // increase by 0.4 per frame
+    this.height.value += 0.4
+    if (this.height.value > 160) {
+      this.height.value = 5
     }
   }
 }
