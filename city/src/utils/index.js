@@ -45,10 +45,12 @@ export const initCity = () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.setClearColor(new THREE.Color(0x000000), 1)
 
+  // clock for scan horizontal line
+  const clock = new THREE.Clock()
   // init city with "requestAnimationFrame"
   const city = new City(scene, camera)
   const start = () => {
-    city.start()
+    city.start(clock.getDelta())
     // controls
     controls.update()
     // render

@@ -2,10 +2,11 @@ import * as THREE from 'three'
 import { color } from '../config'
 
 export class SurrondLine {
-  constructor(scene, child, height) {
+  constructor(scene, child, height, time) {
     this.scene = scene
     this.child = child
     this.height = height
+    this.time = time
     //
     this.createMesh()
     // outline of building
@@ -91,23 +92,60 @@ export class SurrondLine {
     //   color: color.soundline
     // })
 
+    const { max, min } = this.child.geometry.boundingBox
     // v2
     const material = new THREE.ShaderMaterial({
       uniforms: {
         line_color: {
           value: new THREE.Color(color.soundline)
+        },
+        u_time: this.time,
+        u_max: {
+          value: max
+        },
+        u_min: {
+          value: min
+        },
+        live_color: {
+          value: new THREE.Color(color.liveColor)
         }
       },
       vertexShader: `
+        uniform vec3 line_color;
+        uniform float u_time;
+        uniform vec3 u_max;
+        uniform vec3 u_min;
+        uniform vec3 live_color;
+
+        varying vec3 v_color;
+
         void main() {
+          // u_time (changing value)
+          // u_max, u_min
+          // live_color
+          float new_time = mod(u_time * 0.1, 1.0);
+          float rangeY = mix(u_min.y, u_max.y, new_time);
+
+          // ANIMATE scanning horizontal line
+          if (rangeY < position.y && rangeY > position.y - 200.0) {
+            float f_index = 1.0 - sin((position.y - rangeY) / 200.0 * 3.14);
+            float r = mix(live_color.r, line_color.r, f_index);
+            float g = mix(live_color.g, line_color.g, f_index);
+            float b = mix(live_color.b, line_color.b, f_index);
+
+            v_color = vec3(r,g,b);
+          } else {
+            v_color = line_color;
+          }
+
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
       `,
       fragmentShader: `
-        uniform vec3 line_color;
+        varying vec3 v_color;
 
         void main() {
-          gl_FragColor = vec4(line_color, 1.0);
+          gl_FragColor = vec4(v_color, 1.0);
         }
       `
     })
