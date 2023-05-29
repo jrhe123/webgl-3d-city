@@ -7,6 +7,7 @@ import { Background } from './background'
 import { Radar } from './radar'
 import { Wall } from './wall'
 import { Circle } from './circle'
+import { Ball } from './ball'
 
 export class City {
   constructor(scene, camera) {
@@ -51,6 +52,7 @@ export class City {
 
     new Circle(this.scene, this.time)
 
+    new Ball(this.scene, this.time)
     // click event
     this.addClick()
   }
