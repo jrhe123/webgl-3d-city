@@ -6,6 +6,7 @@ import { SurrondLine } from './surroundLine'
 import { Background } from './background'
 import { Radar } from './radar'
 import { Wall } from './wall'
+import { Circle } from './circle'
 
 export class City {
   constructor(scene, camera) {
@@ -47,6 +48,8 @@ export class City {
     new Radar(this.scene, this.time)
 
     new Wall(this.scene, this.time)
+
+    new Circle(this.scene, this.time)
 
     // click event
     this.addClick()

@@ -1,22 +1,21 @@
 import * as THREE from 'three'
 import { color } from '../config'
-//
 import { Cylinder } from './cylinder'
 
-export class Wall {
+export class Circle {
   constructor(scene, time) {
     this.config = {
       radius: 50,
-      height: 50,
-      open: true,
-      color: color.wall,
+      color: color.circle,
       opacity: 0.6,
+      height: 1,
+      open: false,
       position: {
-        x: 0,
+        x: 300,
         y: 0,
-        z: 0
+        z: 300
       },
-      speed: 1.0
+      speed: 2.0
     }
 
     new Cylinder(scene, time).createCylinder(this.config)

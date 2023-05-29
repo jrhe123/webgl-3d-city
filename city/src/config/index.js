@@ -5,5 +5,6 @@ export const color = {
   risingColor: '#5588AA', // buiding scanning up line color
   liveColor: '#ffffff', // building scanning horizontal line color
   radarColor: '#ff8800', //radar color
-  wall: '#fab73f' // wall color
+  wall: '#fab73f', // wall color
+  circle: '#00bbff' // circle color
 }
