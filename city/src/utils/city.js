@@ -10,6 +10,7 @@ import { Circle } from './circle'
 import { Ball } from './ball'
 import { Cone } from './cone'
 import { Fly } from './fly'
+import { Road } from './road'
 
 export class City {
   constructor(scene, camera) {
@@ -64,6 +65,8 @@ export class City {
     new Cone(this.scene, this.top, this.height)
 
     new Fly(this.scene, this.time)
+
+    new Road(this.scene, this.time)
     // click event
     this.addClick()
   }
