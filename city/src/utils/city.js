@@ -83,7 +83,7 @@ export class City {
     // click event
     this.addClick()
 
-    this.addWheel()
+    // this.addWheel()
   }
 
   // zoom with mouse wheel

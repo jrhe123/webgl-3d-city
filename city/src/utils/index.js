@@ -20,7 +20,7 @@ export const initCity = () => {
   // control
   const controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
-  controls.enableZoom = false
+  controls.enableZoom = true
   controls.minDistance = 100
   controls.maxDistance = 2000
   controls.enablePan = true

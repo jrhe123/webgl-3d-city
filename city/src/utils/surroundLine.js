@@ -39,14 +39,27 @@ export class SurrondLine {
         u_height: this.height,
         u_up_color: {
           value: new THREE.Color(color.risingColor)
-        }
+        },
+        // building growth effect
+        u_time: this.time
       },
       vertexShader: `
         varying vec3 v_position;
 
+        uniform float u_time;
+
         void main() {
+          float uMax = 4.0;
           v_position = position;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+          // building growth rate
+          float rate = u_time / uMax * 2.0;
+          if (rate > 1.0) {
+            rate = 1.0;
+          }
+          float z = position.z * rate;
+
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y, z, 1.0);
         }
       `,
       fragmentShader: `
@@ -108,7 +121,9 @@ export class SurrondLine {
         },
         live_color: {
           value: new THREE.Color(color.liveColor)
-        }
+        },
+        // building outline growth effect
+        u_time: this.time
       },
       vertexShader: `
         uniform vec3 line_color;
@@ -126,6 +141,14 @@ export class SurrondLine {
           float new_time = mod(u_time * 0.1, 1.0);
           float rangeY = mix(u_min.y, u_max.y, new_time);
 
+          // outline building growth effect
+          float uMax = 4.0;
+          float rate = u_time / uMax * 2.0;
+          if (rate > 1.0) {
+            rate = 1.0;
+          }
+          float z = position.z * rate;
+
           // ANIMATE scanning horizontal line
           if (rangeY < position.y && rangeY > position.y - 200.0) {
             float f_index = 1.0 - sin((position.y - rangeY) / 200.0 * 3.14);
@@ -138,7 +161,7 @@ export class SurrondLine {
             v_color = line_color;
           }
 
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y, z, 1.0);
         }
       `,
       fragmentShader: `
