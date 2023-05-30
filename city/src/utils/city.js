@@ -13,6 +13,7 @@ import { Fly } from './fly'
 import { Road } from './road'
 import { Font } from './font'
 import { Snow } from './snow'
+import { Rain } from './rain'
 
 export class City {
   constructor(scene, camera) {
@@ -74,7 +75,9 @@ export class City {
 
     new Font(this.scene)
 
-    this.effect.snow = new Snow(this.scene)
+    // this.effect.snow = new Snow(this.scene)
+
+    this.effect.rain = new Rain(this.scene)
     // click event
     this.addClick()
   }
