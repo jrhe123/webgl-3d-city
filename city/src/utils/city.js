@@ -14,6 +14,7 @@ import { Road } from './road'
 import { Font } from './font'
 import { Snow } from './snow'
 import { Rain } from './rain'
+import { Smoke } from './smoke'
 
 export class City {
   constructor(scene, camera, controls) {
@@ -80,6 +81,8 @@ export class City {
     // this.effect.snow = new Snow(this.scene)
 
     // this.effect.rain = new Rain(this.scene)
+
+    this.effect.smoke = new Smoke(this.scene)
     // click event
     this.addClick()
 
