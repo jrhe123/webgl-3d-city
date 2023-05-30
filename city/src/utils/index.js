@@ -20,9 +20,10 @@ export const initCity = () => {
   // control
   const controls = new OrbitControls(camera, canvas)
   controls.enableDamping = true
-  controls.enableZoom = true
+  controls.enableZoom = false
   controls.minDistance = 100
   controls.maxDistance = 2000
+  controls.enablePan = true
 
   // lights
   scene.add(new THREE.AmbientLight(0xadadad))
@@ -48,7 +49,7 @@ export const initCity = () => {
   // clock for scan horizontal line
   const clock = new THREE.Clock()
   // init city with "requestAnimationFrame"
-  const city = new City(scene, camera)
+  const city = new City(scene, camera, controls)
   const start = () => {
     city.start(clock.getDelta())
     // controls

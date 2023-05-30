@@ -16,9 +16,11 @@ import { Snow } from './snow'
 import { Rain } from './rain'
 
 export class City {
-  constructor(scene, camera) {
+  constructor(scene, camera, controls) {
     this.scene = scene
     this.camera = camera
+    this.controls = controls
+
     this.tweenPosition = null
     this.tweenRotation = null
     // scan up line
@@ -77,9 +79,44 @@ export class City {
 
     // this.effect.snow = new Snow(this.scene)
 
-    this.effect.rain = new Rain(this.scene)
+    // this.effect.rain = new Rain(this.scene)
     // click event
     this.addClick()
+
+    this.addWheel()
+  }
+
+  // zoom with mouse wheel
+  addWheel() {
+    const body = document.body
+    body.onwmousewheel = (event) => {
+      const value = 30
+      // mouse current postion
+      const x = (event.clientX / window.innerWidth) * 2 - 1
+      const y = -(event.clientY / window.innerHeight) * 2 + 1
+
+      const vector = new THREE.Vector3(x, y, 0.5)
+      vector.unproject(this.camera)
+      vector.sub(this.camera.position).normalize()
+
+      if (event.wheelDelta > 0) {
+        this.camera.position.x += vector.x * value
+        this.camera.position.y += vector.y * value
+        this.camera.position.z += vector.z * value
+
+        this.controls.target.x += vector.x * value
+        this.controls.target.y += vector.y * value
+        this.controls.target.z += vector.z * value
+      } else {
+        this.camera.position.x -= vector.x * value
+        this.camera.position.y -= vector.y * value
+        this.camera.position.z -= vector.z * value
+
+        this.controls.target.x -= vector.x * value
+        this.controls.target.y -= vector.y * value
+        this.controls.target.z -= vector.z * value
+      }
+    }
   }
 
   addClick() {

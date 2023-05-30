@@ -4,7 +4,7 @@ import { Points } from './points'
 export class Rain {
   constructor(scene) {
     this.points = new Points(scene, {
-      size: 10,
+      size: 15,
       opacity: 0.4,
       range: 1000,
       count: 800,
@@ -41,7 +41,7 @@ export class Rain {
         Math.random() * this.range - this.range / 2
       )
 
-      position.speedY = 20
+      position.speedY = 5
 
       this.pointsList.push(position)
     }
