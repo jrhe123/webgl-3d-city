@@ -9,7 +9,7 @@ export const loadFBX = (url) => {
         resolve(obj)
       },
       () => {
-        console.log('on progress..')
+        // console.log('on progress..')
       },
       (error) => {
         reject(error)

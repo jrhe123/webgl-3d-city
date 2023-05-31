@@ -1,8 +1,11 @@
 import * as THREE from 'three'
+import moment from 'moment-timezone'
 
 export class Background {
   constructor(scene) {
-    this.url = 'assets/white-bg.png'
+    const now = moment().tz('America/Toronto').hour()
+    const isNight = now >= 20 || now <= 8
+    this.url = isNight ? 'assets/black-bg.png' : 'assets/white-bg.png'
     this.scene = scene
     this.init()
   }

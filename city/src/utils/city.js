@@ -15,6 +15,8 @@ import { Font } from './font'
 import { Snow } from './snow'
 import { Rain } from './rain'
 import { Smoke } from './smoke'
+//
+import moment from 'moment-timezone'
 
 export class City {
   constructor(scene, camera, controls) {
@@ -41,6 +43,9 @@ export class City {
     this.effect = {}
     //
     this.loadCity()
+    // date
+    const weekday = moment().tz('America/Toronto').weekday()
+    this.weekday = weekday
   }
 
   loadCity() {
@@ -61,31 +66,25 @@ export class City {
 
   initEffect() {
     new Background(this.scene)
-
-    new Radar(this.scene, this.time)
-
-    new Wall(this.scene, this.time)
-
-    new Circle(this.scene, this.time)
-
-    new Ball(this.scene, this.time)
-
-    new Cone(this.scene, this.top, this.height)
-
-    new Fly(this.scene, this.time)
-
-    new Road(this.scene, this.time)
-
     new Font(this.scene)
 
-    // this.effect.snow = new Snow(this.scene)
-
-    // this.effect.rain = new Rain(this.scene)
-
-    this.effect.smoke = new Smoke(this.scene)
+    if (this.weekday === 1 || this.weekday === 4) {
+      new Fly(this.scene, this.time)
+      new Radar(this.scene, this.time)
+      this.effect.smoke = new Smoke(this.scene)
+    } else if (this.weekday === 2 || this.weekday === 5) {
+      new Road(this.scene, this.time)
+      new Wall(this.scene, this.time)
+      this.effect.snow = new Snow(this.scene)
+    } else if (this.weekday === 3 || this.weekday === 6) {
+      new Cone(this.scene, this.top, this.height)
+      new Circle(this.scene, this.time)
+      this.effect.rain = new Rain(this.scene)
+    } else {
+      new Ball(this.scene, this.time)
+    }
     // click event
     this.addClick()
-
     // this.addWheel()
   }
 

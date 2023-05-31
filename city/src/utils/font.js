@@ -1,12 +1,30 @@
 import * as THREE from 'three'
-import { color } from '../config'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+//
+import moment from 'moment-timezone'
 
 export class Font {
   constructor(scene) {
     this.scene = scene
     this.font = null
+    // date
+    const weekday = moment().tz('America/Toronto').weekday()
+    const now = moment().tz('America/Toronto').hour()
+    const isNight = now >= 20 || now <= 8
+    this.weekday = weekday
+    this.text1 = 'WebGL'
+    this.text2 = 'ReactJS'
+    if (this.weekday === 1 || this.weekday === 4) {
+      this.text1 = 'Sunny - WebGL'
+      this.text2 = `${isNight ? 'Evening' : 'Daylight'} - ReactJS`
+    } else if (this.weekday === 2 || this.weekday === 5) {
+      this.text1 = 'Snow - WebGL'
+      this.text2 = `${isNight ? 'Evening' : 'Daylight'} - ReactJS`
+    } else if (this.weekday === 3 || this.weekday === 6) {
+      this.text1 = 'Rain - WebGL'
+      this.text2 = `${isNight ? 'Evening' : 'Daylight'} - ReactJS`
+    }
 
     this.init()
   }
@@ -23,7 +41,7 @@ export class Font {
   createTextQueue() {
     ;[
       {
-        text: 'building A',
+        text: this.text1,
         size: 20,
         position: {
           x: -10,
@@ -34,12 +52,23 @@ export class Font {
         color: '#ffffff'
       },
       {
-        text: 'building B',
+        text: this.text2,
         size: 20,
         position: {
           x: 180,
           y: 110,
           z: -70
+        },
+        rotate: Math.PI / 2,
+        color: '#ffffff'
+      },
+      {
+        text: 'https://github.com/jrhe123/short_cut',
+        size: 20,
+        position: {
+          x: -300,
+          y: 130,
+          z: 150
         },
         rotate: Math.PI / 2,
         color: '#ffffff'
