@@ -1,5 +1,8 @@
 # webgl-3d-city
 
+### version 2.0.0 (continue reading)
+- https://github.com/jrhe123/webgl-design-tool
+
 ### Live demo
 - https://webgl-3d-city-f259hn4mg-jrhe123.vercel.app/
 
