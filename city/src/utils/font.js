@@ -17,13 +17,13 @@ export class Font {
     this.text2 = 'ReactJS'
     if (this.weekday === 1 || this.weekday === 4) {
       this.text1 = 'Sunny - WebGL'
-      this.text2 = `${isNight ? 'Evening' : 'Daylight'} - ReactJS`
+      this.text2 = `Good ${isNight ? 'Evening' : 'Day'} - ReactJS`
     } else if (this.weekday === 2 || this.weekday === 5) {
       this.text1 = 'Snow - WebGL'
-      this.text2 = `${isNight ? 'Evening' : 'Daylight'} - ReactJS`
+      this.text2 = `Good ${isNight ? 'Evening' : 'Day'} - ReactJS`
     } else if (this.weekday === 3 || this.weekday === 6) {
       this.text1 = 'Rain - WebGL'
-      this.text2 = `${isNight ? 'Evening' : 'Daylight'} - ReactJS`
+      this.text2 = `Good ${isNight ? 'Evening' : 'Day'} - ReactJS`
     }
 
     this.init()
@@ -57,7 +57,7 @@ export class Font {
         position: {
           x: 180,
           y: 110,
-          z: -70
+          z: 70
         },
         rotate: Math.PI / 2,
         color: '#ffffff'

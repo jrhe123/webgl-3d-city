@@ -7,7 +7,7 @@ export class Rain {
       size: 15,
       opacity: 0.4,
       range: 1000,
-      count: 800,
+      count: 200,
       setAnimation(position) {
         position.y -= position.speedY
 

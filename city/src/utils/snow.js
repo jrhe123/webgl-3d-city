@@ -4,10 +4,10 @@ import { Points } from './points'
 export class Snow {
   constructor(scene) {
     this.points = new Points(scene, {
-      size: 30,
+      size: 20,
       opacity: 0.8,
       range: 1000,
-      count: 600,
+      count: 200,
       setAnimation(position) {
         position.x -= position.speedX
         position.y -= position.speedY
